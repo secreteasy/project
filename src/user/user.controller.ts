@@ -1,14 +1,35 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Patch,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { createUserDTO } from './dto';
+import { updateUserDto } from './dto';
+import { jwtAuthGuard } from 'src/guards/jwt-guard';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('create-user')
-  createUsers(@Body() dto: createUserDTO) {
-    console.log(dto);
-    return this.userService.createUser(dto);
+  @ApiTags('API')
+  @ApiResponse({ status: 200, type: updateUserDto })
+  @UseGuards(jwtAuthGuard)
+  @Patch()
+  updateUser(
+    @Body() updateDto: updateUserDto,
+    @Req() request,
+  ): Promise<updateUserDto> {
+    const user = request.user;
+    return this.userService.updateUser(user.email, updateDto);
+  }
+  @UseGuards(jwtAuthGuard)
+  @Delete()
+  deleteUser(@Req() request) {
+    const user = request.user;
+    return this.userService.deleteUser(user.email);
   }
 }
