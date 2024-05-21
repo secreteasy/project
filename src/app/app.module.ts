@@ -3,9 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from 'src/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SequelizeModule } from '@nestjs/sequelize';
-import configurations from 'src/configurations';
-import { User } from 'src/user/modules/user.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { TokenModule } from 'src/token/token.module';
 
@@ -13,22 +11,20 @@ import { TokenModule } from 'src/token/token.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configurations],
     }),
-    SequelizeModule.forRootAsync({
+    TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        dialect: 'postgres',
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
         host: configService.get('db_host'),
-        port: configService.get('db_port'),
+        port: +configService.get('db_port'),
         username: configService.get('db_user'),
         password: configService.get('db_password'),
         database: configService.get('db_name'),
         synchronize: true,
-        autoLoadModels: true,
-        models: [User],
+        entities: [__dirname + '/../**/*.entity.{js,ts}'],
       }),
+      inject: [ConfigService],
     }),
     UserModule,
     AuthModule,

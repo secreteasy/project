@@ -1,30 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
 import { User } from './/modules/user.module';
 import * as bcrypt from 'bcrypt';
 import { createUserDTO, updateUserDto } from './dto';
-// import { AppError } from 'src/common/const/errors';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User) private readonly userRepository: typeof User,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async hashPassword(password) {
     return bcrypt.hash(password, 10);
   }
-  async findUserByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email: email } });
+  async findUserByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
   }
   async findUserByUserName(userName: string) {
     return this.userRepository.findOne({ where: { userName: userName } });
   }
   async createUser(dto: createUserDTO): Promise<createUserDTO> {
-    // const existUser = await this.findUserByEmail(dto.email);
-    // if (existUser) throw new BadRequestException(AppError.USER_EXIST);
-    // const existUserName = await this.findUserByUserName(dto.userName);
-    // if (existUserName) throw new BadRequestException(AppError.USERNAME_EXIST);
     dto.password = await this.hashPassword(dto.password);
     const newUser = {
       firstName: dto.firstName,
@@ -36,20 +33,28 @@ export class UserService {
     return dto;
   }
 
-  async publicUser(email: string) {
+  async publicUser(email: string): Promise<User> {
     return this.userRepository.findOne({
       where: { email },
-      attributes: { exclude: ['password'] },
+      select: ['id', 'firstName', 'userName', 'email'],
     });
   }
 
   async updateUser(email: string, dto: updateUserDto): Promise<updateUserDto> {
-    await this.userRepository.update(dto, { where: { email } });
+    await this.userRepository.update({ email }, dto);
     return dto;
   }
 
-  async deleteUser(email: string) {
-    await this.userRepository.destroy({ where: { email } });
+  async deleteUser(email: string): Promise<boolean> {
+    await this.userRepository.delete({ email });
     return true;
+  }
+
+  async findPurchasesByUserId(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['purchases'],
+    });
+    return user.shops.some((shop) => shop.id === shopId);
   }
 }

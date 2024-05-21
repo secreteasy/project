@@ -1,0 +1,11 @@
+{
+    "type": "postgres", 
+    "host": "localhost",
+    "port": 5432, 
+    "username": "artem",
+    "password": "artem",
+    "database": "postgres",
+    "entities": ["dist/**/*.entity.js"],
+    "synchronize": true
+  }
+  
