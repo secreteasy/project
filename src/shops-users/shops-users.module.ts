@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
-import { ShopsService } from './shops.service';
-import { UsersService } from './users.service';
-import { ShopsController } from './shops.controller';
-import { UsersController } from './users.controller';
+import { ShopsUsersService } from './shops-users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Shop } from './entities/shop.entity';
-import { User } from './entities/user.entity';
-import { OwnershipGuard } from './guards/ownership.guard';
+import { Shop } from 'src/entities/shop.entity';
+import { User } from 'src/entities/user.entity';
+import { UserController } from 'src/user/user.controller';
+import { UserService } from 'src/user/user.service';
+import { ShopsUsersController } from './shops-users.controller';
+import { OwnershipGuard } from 'src/guards/ownership.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Shop, User])],
-  controllers: [ShopsController, UsersController],
-  providers: [ShopsService, UsersService, OwnershipGuard],
+  controllers: [ShopsUsersController, UserController],
+  providers: [ShopsUsersService, UserService, OwnershipGuard],
+  exports: [TypeOrmModule],
 })
 export class ShopsUsersModule {}

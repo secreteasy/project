@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'sequelize-typescript';
+import { Shop } from 'src/entities/shop.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ShopsUsersService {

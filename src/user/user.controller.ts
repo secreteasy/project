@@ -13,6 +13,9 @@ import { updateUserDto } from './dto';
 import { jwtAuthGuard } from 'src/guards/jwt-guard';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from 'src/decorator/current-user.decorator';
+import { OwnershipGuard } from 'src/guards/ownership.guard';
+import { User } from 'src/entities/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -38,7 +41,11 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), OwnershipGuard)
   @Get(':userId/purchases')
-  findPurchasesByUser(@Param('userId') userId: string, @CurrentUser() user) {
-    return this.userService.findPurchasesByUserID(Number(userId));
+  findPurchasesByUser(
+    @Param('userId') userId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @CurrentUser() user: User,
+  ) {
+    return this.userService.findPurchasesByUserId(Number(userId));
   }
 }

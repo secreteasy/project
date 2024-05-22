@@ -4,12 +4,15 @@ import * as bcrypt from 'bcrypt';
 import { createUserDTO, updateUserDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Shop } from 'src/entities/shop.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Shop)
+    private readonly shopRepository: Repository<Shop>,
   ) {}
 
   async hashPassword(password) {
@@ -55,6 +58,12 @@ export class UserService {
       where: { id: userId },
       relations: ['purchases'],
     });
-    return user.shops.some((shop) => shop.id === shopId);
+    return user.shops.some((shop) => shop.id === shop);
+  }
+  async isOwnerOfShop(userId: number, shopId: number): Promise<boolean> {
+    const shop = await this.shopRepository.findOne({
+      where: { id: shopId, ownerId: userId },
+    });
+    return !!shop;
   }
 }
