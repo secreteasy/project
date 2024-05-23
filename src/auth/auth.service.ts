@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AppError } from 'src/common/const/errors';
-import { createUserDTO } from 'src/user/dto';
+import { createUserDTO } from 'src/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { UserLoginDTO } from './dto';
+import { UserLoginDTO } from 'src/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { AuthUserResponse } from './response';
+import { AuthUserResponse } from 'src/entities/user.entity';
 import { TokenService } from 'src/token/token.service';
 
 @Injectable()
@@ -35,12 +35,12 @@ export class AuthService {
       existUser.password,
     );
     if (!validatePassword) throw new BadRequestException(AppError.WRONG_DATA);
-    const userData = {
-      name: existUser.firstName,
-      email: existUser.email,
-    };
-    const token = await this.tokenService.generateJwtToken(userData);
-    const user = await this.userService.publicUser(dto.email);
-    return { ...user, token };
+    // const userData = {
+    //   name: existUser.firstName,
+    //   email: existUser.email,
+    // };
+    const token = await this.tokenService.generateJwtToken(dto.email);
+    // const user = await this.userService.publicUser(dto.email);
+    return { ...existUser, token };
   }
 }

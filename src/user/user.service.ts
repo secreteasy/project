@@ -18,8 +18,8 @@ export class UserService {
   async hashPassword(password) {
     return bcrypt.hash(password, 10);
   }
-  async findUserByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ where: { email } });
+  async findUserByEmail(email: string) {
+    return this.userRepository.findOne({ where: { email: email } });
   }
   async findUserByUserName(userName: string) {
     return this.userRepository.findOne({ where: { userName: userName } });
@@ -58,7 +58,7 @@ export class UserService {
       where: { id: userId },
       relations: ['purchases'],
     });
-    return user.shops.some((shop) => shop.id === shop);
+    return user.shops.some((shop) => shop.id === userId);
   }
   async isOwnerOfShop(userId: number, shopId: number): Promise<boolean> {
     const shop = await this.shopRepository.findOne({

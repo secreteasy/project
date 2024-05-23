@@ -8,6 +8,9 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TokenModule } from 'src/token/token.module';
 import jwtConfig from 'src/configurations/index';
 import { JwtStrategy } from 'src/strategy/jwt.strategy';
+import { User } from 'src/entities/user.entity';
+import { Shop } from 'src/entities/shop.entity';
+import { Purchase } from 'src/entities/purchase.entity';
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import { JwtStrategy } from 'src/strategy/jwt.strategy';
         password: configService.get('db_password'),
         database: configService.get('db_name'),
         synchronize: true,
-        entities: [__dirname + '/../**/*.entity.{js,ts}'],
+        entities: [User, Shop, Purchase],
       }),
       inject: [ConfigService],
     }),
@@ -36,4 +39,8 @@ import { JwtStrategy } from 'src/strategy/jwt.strategy';
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly configService: ConfigService) {
+    console.log('JWT Secret:', configService.get<string>('jwt.secret_jwt'));
+  }
+}

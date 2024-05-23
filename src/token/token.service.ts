@@ -11,9 +11,17 @@ export class TokenService {
 
   async generateJwtToken(user) {
     const payload = { user };
+    const secret = this.configService.get<string>('jwt.secret_jwt');
+    const expiresIn = this.configService.get<string>('jwt.expire_jwt');
+
+    // Логирование для диагностики
+    console.log('Generating JWT with payload:', payload);
+    console.log('JWT Secret:', secret);
+    console.log('JWT Expires In:', expiresIn);
+
     return this.jwtService.sign(payload, {
-      secret: this.configService.get('secret_jwt'),
-      expiresIn: this.configService.get('expire_jwt'),
+      secret: secret,
+      expiresIn: expiresIn,
     });
   }
 }

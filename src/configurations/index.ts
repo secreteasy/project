@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 export default () => ({
   port: process.env._PORT,
   db_port: process.env._DB_PORT,
@@ -7,7 +10,7 @@ export default () => ({
   db_name: process.env._DB_NAME,
   jwt: {
     secret_jwt: process.env._SECRET,
-    signOptions: { expiresIn: '60s' },
+    signOptions: { expiresIn: parseInt(process.env._EXPIRE_JWT) },
   },
   expire_jwt: process.env._EXPIRE_JWT,
 });

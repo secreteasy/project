@@ -1,8 +1,8 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { createUserDTO } from 'src/user/dto';
-import { UserLoginDTO } from './dto';
-import { AuthUserResponse } from './response';
+import { createUserDTO } from 'src/entities/user.entity';
+import { UserLoginDTO } from 'src/entities/user.entity';
+import { AuthUserResponse } from 'src/entities/user.entity';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { jwtAuthGuard } from 'src/guards/jwt-guard';
 
@@ -22,13 +22,18 @@ export class AuthController {
   registerUserName(@Body() dto: createUserDTO): Promise<createUserDTO> {
     return this.authService.registerUserNames(dto);
   }
+  // @ApiTags('API')
+  // @ApiResponse({ status: 200, type: AuthUserResponse })
+  // @Post('login')
+  // login(@Body() dto: UserLoginDTO): Promise<AuthUserResponse> {
+  //   return this.authService.loginUser(dto);
+  // }
   @ApiTags('API')
   @ApiResponse({ status: 200, type: AuthUserResponse })
   @Post('login')
-  login(@Body() dto: UserLoginDTO): Promise<AuthUserResponse> {
+  async login(@Body() dto: UserLoginDTO): Promise<AuthUserResponse> {
     return this.authService.loginUser(dto);
   }
-
   @UseGuards(jwtAuthGuard)
   @Post('test')
   test() {
