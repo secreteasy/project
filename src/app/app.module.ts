@@ -11,6 +11,7 @@ import { JwtStrategy } from 'src/strategy/jwt.strategy';
 import { User } from 'src/entities/user.entity';
 import { Shop } from 'src/entities/shop.entity';
 import { Purchase } from 'src/entities/purchase.entity';
+import { ShopModule } from 'src/shop/shop.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { Purchase } from 'src/entities/purchase.entity';
     UserModule,
     AuthModule,
     TokenModule,
+    ShopModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
