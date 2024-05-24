@@ -22,12 +22,6 @@ export class AuthController {
   registerUserName(@Body() dto: createUserDTO): Promise<createUserDTO> {
     return this.authService.registerUserNames(dto);
   }
-  // @ApiTags('API')
-  // @ApiResponse({ status: 200, type: AuthUserResponse })
-  // @Post('login')
-  // login(@Body() dto: UserLoginDTO): Promise<AuthUserResponse> {
-  //   return this.authService.loginUser(dto);
-  // }
   @ApiTags('API')
   @ApiResponse({ status: 200, type: AuthUserResponse })
   @Post('login')
@@ -37,6 +31,6 @@ export class AuthController {
   @UseGuards(jwtAuthGuard)
   @Post('test')
   test() {
-    return true;
+    return { message: 'Authorized' };
   }
 }

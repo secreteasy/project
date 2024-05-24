@@ -41,6 +41,9 @@ import { Purchase } from 'src/entities/purchase.entity';
 })
 export class AppModule {
   constructor(private readonly configService: ConfigService) {
-    console.log('JWT Secret:', configService.get<string>('jwt.secret_jwt'));
+    console.log(
+      'Loaded Configuration:',
+      this.configService.get<string>('jwt.signOptions.expiresIn'),
+    );
   }
 }

@@ -18,13 +18,13 @@ export class UserService {
   async hashPassword(password) {
     return bcrypt.hash(password, 10);
   }
-  async findUserByEmail(email: string) {
+  async findUserByEmail(email: string): Promise<User> {
     return this.userRepository.findOne({ where: { email: email } });
   }
-  async findUserByUserName(userName: string) {
+  async findUserByUserName(userName: string): Promise<User> {
     return this.userRepository.findOne({ where: { userName: userName } });
   }
-  async createUser(dto: createUserDTO): Promise<createUserDTO> {
+  async createUser(dto: createUserDTO): Promise<User> {
     dto.password = await this.hashPassword(dto.password);
     const newUser = {
       firstName: dto.firstName,
@@ -33,7 +33,7 @@ export class UserService {
       password: dto.password,
     };
     await this.userRepository.create(newUser);
-    return dto;
+    return this.userRepository.save(newUser);
   }
 
   async publicUser(email: string): Promise<User> {

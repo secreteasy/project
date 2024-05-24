@@ -10,7 +10,8 @@ export default () => ({
   db_name: process.env._DB_NAME,
   jwt: {
     secret_jwt: process.env._SECRET,
-    signOptions: { expiresIn: parseInt(process.env._EXPIRE_JWT) },
+    // signOptions: { expiresIn: parseInt(process.env._EXPIRE_JWT) || '1d' },
+    signOptions: { expiresIn: '1d' },
   },
   expire_jwt: process.env._EXPIRE_JWT,
 });
