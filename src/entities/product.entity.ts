@@ -1,7 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Shop, ShopAdmin } from './shop.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
+import { Purchase } from './purchase.entity';
 
 @Entity()
 export class Product {
@@ -24,6 +31,9 @@ export class Product {
 
   @Column({ default: false })
   isPurchased: boolean;
+
+  @OneToMany(() => Purchase, (purchase) => purchase.product)
+  purchases: Purchase[];
 }
 
 export class CreateProductDto {

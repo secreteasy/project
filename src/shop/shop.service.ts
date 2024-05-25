@@ -69,4 +69,11 @@ export class ShopService {
       where: { shop: { id: shopId }, isPurchased: true },
     });
   }
+
+  findAll(): Promise<Shop[]> {
+    return this.shopRepository.find();
+  }
+  findProductsByShopId(shopId: number): Promise<Product[]> {
+    return this.productRepository.find({ where: { shop: { id: shopId } } });
+  }
 }

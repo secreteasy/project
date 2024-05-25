@@ -1,4 +1,4 @@
-import { Body, Controller, Param, UseGuards, Post } from '@nestjs/common';
+import { Body, Controller, Param, UseGuards, Post, Get } from '@nestjs/common';
 import { ShopService } from './shop.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateShopDto } from 'src/entities/shop.entity';
@@ -39,5 +39,14 @@ export class ShopController {
   @Post('purchased/:shopId')
   getPurchasedProductByShop(@Param('shopId') shopId: number) {
     return this.shopService.getPurchasedProductsByShop(shopId);
+  }
+  @Get()
+  getAllShops() {
+    return this.shopService.findAll();
+  }
+
+  @Get(':id/products')
+  getProductsByShopId(@Param('id') id: number) {
+    return this.shopService.findProductsByShopId(id);
   }
 }
