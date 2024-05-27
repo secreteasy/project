@@ -17,8 +17,8 @@ import { JwtStrategy } from '../strategy/jwt.strategy';
         const expiresIn = configService.get<string>(
           'jwt.signOptions.expiresIn', //jwt.signOptions.expiresIn
         );
-        console.log('JWT Module Configuration - Secret:', secret); // Логирование для проверки
-        console.log('JWT Module Configuration - Expires In:', expiresIn); // Логирование для проверки
+        console.log('JWT Module Configuration - Secret:', secret);
+        console.log('JWT Module Configuration - Expires In:', expiresIn);
         return {
           secret: secret,
           signOptions: { expiresIn: expiresIn },

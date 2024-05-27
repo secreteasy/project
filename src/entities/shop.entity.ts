@@ -7,8 +7,6 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Product } from './product.entity';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
 
 @Entity()
 export class Shop {
@@ -29,30 +27,4 @@ export class Shop {
 
   @OneToMany(() => Product, (product) => product.shop)
   products: Product[];
-}
-
-export class ShopAdmin {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  ownerId: number;
-
-  @Column({ type: 'decimal', default: 0 })
-  revenue: number;
-
-  @ManyToOne(() => User, (user) => user.shops)
-  owner: User;
-
-  @Column()
-  name: string;
-
-  @OneToMany(() => Product, (product) => product.shop)
-  products: Product[];
-}
-
-export class CreateShopDto {
-  @ApiProperty()
-  @IsString()
-  name: string;
 }

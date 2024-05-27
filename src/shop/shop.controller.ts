@@ -1,43 +1,41 @@
-import { Body, Controller, Param, UseGuards, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { ShopService } from './shop.service';
-import { AuthGuard } from '@nestjs/passport';
-import { CreateShopDto } from 'src/entities/shop.entity';
-import { CreateProductDto } from 'src/entities/product.entity';
+import { Shop } from 'src/entities/shop.entity';
 
-@Controller('shop')
+@Controller('shops')
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}
-  @UseGuards(AuthGuard)
-  @Post('create')
-  createShop(
-    @Body() createShopDto: CreateShopDto,
-    @Param('ownerId') ownerId: number,
-  ) {
-    return this.shopService.createShop(ownerId, createShopDto);
+
+  @Get()
+  findAll(): Promise<Shop[]> {
+    return this.shopService.findAll();
   }
 
-  @UseGuards(AuthGuard)
-  @Post('owner/:ownerId')
-  getShopsByOwner(@Param('ownerId') ownerId: number) {
-    return this.shopService.getShopsByOwner(ownerId);
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<Shop> {
+    return this.shopService.findOne(+id);
   }
 
-  @Post(':shopId/products')
-  async addProductToShop(
-    @Param('shopId') shopId: number,
-    @Body() createProductDto: CreateProductDto,
-  ) {
-    return this.shopService.addProductToShop(shopId, createProductDto);
+  @Post()
+  create(@Body() shop: Shop): Promise<Shop> {
+    return this.shopService.create(shop);
   }
 
-  @UseGuards(AuthGuard)
-  @Post('confirm-purchase/:productId')
-  confirmProductPurchase(@Param('productId') productId: number) {
-    return this.shopService.confirmProductPurchase(productId);
+  @Put(':id')
+  update(@Param('id') id: string, @Body() shop: Shop): Promise<Shop> {
+    return this.shopService.update(+id, shop);
   }
-  @UseGuards(AuthGuard)
-  @Post('purchased/:shopId')
-  getPurchasedProductByShop(@Param('shopId') shopId: number) {
-    return this.shopService.getPurchasedProductsByShop(shopId);
+
+  @Delete(':id')
+  remove(@Param('id') id: string): Promise<void> {
+    return this.shopService.remove(+id);
   }
 }

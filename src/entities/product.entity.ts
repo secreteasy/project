@@ -1,7 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Shop, ShopAdmin } from './shop.entity';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Shop } from './shop.entity';
+import { Purchase } from './purchase.entity';
 
 @Entity()
 export class Product {
@@ -11,29 +16,12 @@ export class Product {
   @Column()
   name: string;
 
-  @Column({ type: 'decimal' })
+  @Column()
   price: number;
 
   @ManyToOne(() => Shop, (shop) => shop.products, { nullable: true })
   shop: Shop;
 
-  @ManyToOne(() => ShopAdmin, (shopAdmin) => shopAdmin.products, {
-    nullable: true,
-  })
-  shopAdmin: ShopAdmin;
-
-  @Column({ default: false })
-  isPurchased: boolean;
-}
-
-export class CreateProductDto {
-  @ApiProperty()
-  @IsString()
-  shopId: number;
-  @ApiProperty()
-  @IsString()
-  name: string;
-  @ApiProperty()
-  @IsString()
-  price: number;
+  @OneToMany(() => Purchase, (purchase) => purchase.product)
+  purchases: Purchase[];
 }

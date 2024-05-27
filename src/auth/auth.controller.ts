@@ -1,10 +1,10 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { createUserDTO } from 'src/entities/user.entity';
-import { UserLoginDTO } from 'src/entities/user.entity';
-import { AuthUserResponse } from 'src/entities/user.entity';
+import { createUserDTO } from 'src/user/dto/createUserDTO';
+import { UserLoginDTO } from 'src/auth/dto/UserLoginDTO';
+import { AuthUserResponse } from 'src/auth/dto/AuthUserResponse';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { jwtAuthGuard } from 'src/guards/jwt-guard';
+import { JwtAuthGuard } from 'src/guards/jwt-guard';
 
 @Controller('auth')
 export class AuthController {
@@ -28,7 +28,7 @@ export class AuthController {
   async login(@Body() dto: UserLoginDTO): Promise<AuthUserResponse> {
     return this.authService.loginUser(dto);
   }
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('test')
   test() {
     return { message: 'Authorized' };
