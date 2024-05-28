@@ -4,7 +4,7 @@ import { createUserDTO } from 'src/user/dto/createUserDTO';
 import { UserLoginDTO } from 'src/auth/dto/UserLoginDTO';
 import { AuthUserResponse } from 'src/auth/dto/AuthUserResponse';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/guards/jwt-guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 
 @Controller('auth')
 export class AuthController {

@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from 'src/entities/product.entity';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateProductDto } from './dto/CreateProductDto';
 
 @Controller('products')
 export class ProductController {
@@ -23,10 +25,11 @@ export class ProductController {
   findOne(@Param('id') id: string): Promise<Product> {
     return this.productService.findOne(+id);
   }
-
-  @Post()
-  create(@Body() product: Product): Promise<Product> {
-    return this.productService.create(product);
+  @ApiTags('API')
+  @ApiResponse({ status: 201, type: Product })
+  @Post('createProduct')
+  createProduct(@Body() createProductDto: CreateProductDto): Promise<Product> {
+    return this.productService.createProduct(createProductDto);
   }
 
   @Put(':id')

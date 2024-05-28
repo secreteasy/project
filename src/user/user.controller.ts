@@ -10,12 +10,9 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { updateUserDto } from './dto/createUserDTO';
-import { JwtAuthGuard } from 'src/guards/jwt-guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-// import { AuthGuard } from '@nestjs/passport';
-// import { CurrentUser } from 'src/decorator/current-user.decorator';
-import { OwnershipGuard } from 'src/guards/ownership.guard';
-// import { User } from 'src/entities/user.entity';
+import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
 
 @Controller('user')
 export class UserController {
@@ -38,12 +35,6 @@ export class UserController {
     const user = request.user;
     return this.userService.deleteUser(user.email);
   }
-
-  // @UseGuards(JwtAuthGuard, OwnershipGuard)
-  // @Get(':userId/purchases')
-  // findPurchasesByUser(@Param('userId') userId: string) {
-  //   return this.userService.findPurchasesByUserId(Number(userId));
-  // }
   @UseGuards(JwtAuthGuard, OwnershipGuard)
   @Get(':userId/purchases')
   findPurchasesByUser(@Param('userId') userId: string) {

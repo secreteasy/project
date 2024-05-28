@@ -1,13 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Purchase } from 'src/entities/purchase.entity';
+import { CreatePurchaseDto } from './dto/CreatePurchaseDto';
+import { Product } from 'src/entities/product.entity';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class PurchaseService {
   constructor(
     @InjectRepository(Purchase)
     private purchaseRepository: Repository<Purchase>,
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async findAll(): Promise<Purchase[]> {
@@ -18,8 +25,59 @@ export class PurchaseService {
     return this.purchaseRepository.findOneBy({ id });
   }
 
-  async create(purchase: Purchase): Promise<Purchase> {
+  async createPurchase(
+    createPurchaseDto: CreatePurchaseDto,
+  ): Promise<Purchase> {
+    const product = await this.productRepository.findOneBy({
+      id: createPurchaseDto.productId,
+    });
+    if (!product) {
+      throw new NotFoundException(
+        `Product with ID ${createPurchaseDto.productId} not found`,
+      );
+    }
+
+    const user = await this.userRepository.findOneBy({
+      id: createPurchaseDto.userId,
+    });
+    if (!user) {
+      throw new NotFoundException(
+        `User with ID ${createPurchaseDto.userId} not found`,
+      );
+    }
+
+    const purchase = this.purchaseRepository.create({
+      product,
+      user,
+      date: new Date(createPurchaseDto.date),
+      price: createPurchaseDto.price,
+      confirmed: false,
+    });
     return this.purchaseRepository.save(purchase);
+  }
+
+  async confirmPurchase(purchaseId: number): Promise<Purchase> {
+    const purchase = await this.purchaseRepository.findOne({
+      where: { id: purchaseId },
+    });
+    if (!purchase) {
+      throw new NotFoundException(`Purchase with ID ${purchaseId} not found`);
+    }
+
+    purchase.confirmed = true;
+
+    return this.purchaseRepository.save(purchase);
+  }
+
+  async rejectPurchase(purchaseId: number): Promise<void> {
+    const purchase = await this.purchaseRepository.findOne({
+      where: { id: purchaseId },
+    });
+    if (!purchase) {
+      throw new NotFoundException(`Purchase with ID ${purchaseId} not found`);
+    }
+
+    await this.purchaseRepository.delete(purchaseId);
   }
 
   async update(id: number, purchase: Purchase): Promise<Purchase> {
@@ -29,5 +87,12 @@ export class PurchaseService {
 
   async remove(id: number): Promise<void> {
     await this.purchaseRepository.delete(id);
+  }
+
+  async getPurchaseByUserId(userId: number): Promise<Purchase[]> {
+    return this.purchaseRepository.find({
+      where: { user: { id: userId } },
+      relations: ['product', 'user'],
+    });
   }
 }

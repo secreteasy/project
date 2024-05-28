@@ -7,7 +7,7 @@ export class Purchase {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Product, (product) => product.purchases)
+  @ManyToOne(() => Product, (product) => product.purchases, { eager: true })
   product: Product;
 
   @Column()
@@ -16,6 +16,9 @@ export class Purchase {
   @Column()
   date: Date;
 
-  @ManyToOne(() => User, (user) => user.purchases)
+  @ManyToOne(() => User, (user) => user.purchases, { eager: true })
   user: User;
+
+  @Column({ default: false })
+  confirmed: boolean;
 }
