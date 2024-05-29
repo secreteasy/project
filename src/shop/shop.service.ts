@@ -77,10 +77,6 @@ export class ShopService {
       throw new NotFoundException(`Shop with ID ${shopId} not found`);
     }
     const productsIds = shop.products.map((product) => product.id);
-    // return this.purchaseRepository.find({
-    //   where: { product: { id: { $in: productsIds } } },
-    //   relations: ['product', 'user'],
-    // });
     return this.purchaseRepository
       .createQueryBuilder('purchase')
       .leftJoinAndSelect('purchase.product', 'product')

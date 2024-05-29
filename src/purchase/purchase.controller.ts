@@ -22,10 +22,6 @@ export class PurchaseController {
     return this.purchaseService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string): Promise<Purchase> {
-  //   return this.purchaseService.findOne(+id);
-  // }
   @ApiTags('API')
   @ApiResponse({ status: 201, type: Purchase })
   @Post('createPurchase')
