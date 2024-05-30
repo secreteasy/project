@@ -5,11 +5,10 @@ import {
   Get,
   Param,
   Patch,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { updateUserDto } from './dto/createUserDTO';
+import { updateUserDto } from './dto/updateUserDto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
@@ -21,20 +20,20 @@ export class UserController {
   @ApiTags('API')
   @ApiResponse({ status: 200, type: updateUserDto })
   @UseGuards(JwtAuthGuard)
-  @Patch()
+  @Patch(':id')
   updateUser(
-    @Body() updateDto: updateUserDto,
-    @Req() request,
+    @Param('id') id: number,
+    @Body() dto: updateUserDto,
   ): Promise<updateUserDto> {
-    const user = request.user;
-    return this.userService.updateUser(user.email, updateDto);
+    return this.userService.updateUser(Number(id), dto);
   }
+
   @UseGuards(JwtAuthGuard)
-  @Delete()
-  deleteUser(@Req() request): Promise<boolean> {
-    const user = request.user;
-    return this.userService.deleteUser(user.email);
+  @Delete(':id')
+  deleteUser(@Param('id') id: number): Promise<boolean> {
+    return this.userService.deleteUser(Number(id));
   }
+
   @UseGuards(JwtAuthGuard, OwnershipGuard)
   @Get(':userId/purchases')
   findPurchasesByUser(@Param('userId') userId: string) {

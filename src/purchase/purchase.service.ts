@@ -56,7 +56,7 @@ export class PurchaseService {
     return this.purchaseRepository.save(purchase);
   }
 
-  async confirmPurchase(purchaseId: number): Promise<Purchase> {
+  async confirmPurchase(purchaseId: number): Promise<string> {
     const purchase = await this.purchaseRepository.findOne({
       where: { id: purchaseId },
     });
@@ -65,19 +65,22 @@ export class PurchaseService {
     }
 
     purchase.confirmed = true;
+    purchase.status = 'confirmed';
 
-    return this.purchaseRepository.save(purchase);
+    await this.purchaseRepository.save(purchase);
+    return `Purchase with ID ${purchaseId} has been confirm`;
   }
 
-  async rejectPurchase(purchaseId: number): Promise<void> {
+  async rejectPurchase(purchaseId: number): Promise<string> {
     const purchase = await this.purchaseRepository.findOne({
       where: { id: purchaseId },
     });
     if (!purchase) {
       throw new NotFoundException(`Purchase with ID ${purchaseId} not found`);
     }
-
-    await this.purchaseRepository.delete(purchaseId);
+    purchase.status = 'rejected';
+    await this.purchaseRepository.save(purchase);
+    return `Purchase with ID ${purchaseId} has been rejected`;
   }
 
   async update(id: number, purchase: Purchase): Promise<Purchase> {

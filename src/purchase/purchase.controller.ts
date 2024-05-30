@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   NotFoundException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PurchaseService } from './purchase.service';
 import { Purchase } from 'src/entities/purchase.entity';
@@ -75,7 +76,10 @@ export class PurchaseController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.purchaseService.remove(+id);
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
+    const message = await this.purchaseService.rejectPurchase(id);
+    return { message };
   }
 }

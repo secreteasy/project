@@ -21,4 +21,7 @@ export class Purchase {
 
   @Column({ default: false })
   confirmed: boolean;
+
+  @Column({ default: 'pending' })
+  status: string;
 }

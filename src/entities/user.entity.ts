@@ -8,7 +8,7 @@ export class User {
   id: number;
 
   @Column()
-  firstName: string;
+  firstName!: string;
 
   @Column()
   userName: string;

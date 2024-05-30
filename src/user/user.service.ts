@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { createUserDTO } from './dto/createUserDTO';
@@ -19,12 +19,13 @@ export class UserService {
   async hashPassword(password) {
     return bcrypt.hash(password, 10);
   }
-  async findUserByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ where: { email: email } });
+
+  async findUserBy(field: keyof User, value: any): Promise<User> {
+    return this.userRepository.findOne({
+      where: { [field]: value },
+    });
   }
-  async findUserByUserName(userName: string): Promise<User> {
-    return this.userRepository.findOne({ where: { userName: userName } });
-  }
+
   async createUser(dto: createUserDTO): Promise<User> {
     dto.password = await this.hashPassword(dto.password);
     const newUser = {
@@ -33,7 +34,6 @@ export class UserService {
       email: dto.email,
       password: dto.password,
     };
-    await this.userRepository.create(newUser);
     return this.userRepository.save(newUser);
   }
 
@@ -44,13 +44,20 @@ export class UserService {
     });
   }
 
-  async updateUser(email: string, dto: updateUserDto): Promise<updateUserDto> {
-    await this.userRepository.update({ email }, dto);
+  async updateUser(id: number, dto: updateUserDto): Promise<updateUserDto> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(`User with Id ${id} not found`);
+    }
+    await this.userRepository.update(id, dto);
     return dto;
   }
 
-  async deleteUser(email: string): Promise<boolean> {
-    await this.userRepository.delete({ email });
+  async deleteUser(id: number): Promise<boolean> {
+    const result = await this.userRepository.delete({ id });
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with Id ${id} not found`);
+    }
     return true;
   }
 
@@ -61,6 +68,7 @@ export class UserService {
     });
     return user.shops.some((shop) => shop.id === userId);
   }
+
   async isOwnerOfShop(userId: number, shopId: number): Promise<boolean> {
     const shop = await this.shopRepository.findOne({
       where: { id: shopId, ownerId: userId },

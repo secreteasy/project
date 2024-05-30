@@ -17,20 +17,12 @@ import { User } from 'src/entities/user.entity';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Product } from 'src/entities/product.entity';
 import { Purchase } from 'src/entities/purchase.entity';
+import { CreateShopDto } from './dto/CreateShopDto';
 
 @Controller('shops')
 export class ShopController {
+  logger: any;
   constructor(private readonly shopService: ShopService) {}
-
-  @Get()
-  findAll(): Promise<Shop[]> {
-    return this.shopService.findAll();
-  }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string): Promise<Shop> {
-  //   return this.shopService.findOne(+id);
-  // }
 
   @Post('create')
   create(@Body() shop: Shop): Promise<Shop> {
@@ -38,8 +30,12 @@ export class ShopController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() shop: Shop): Promise<Shop> {
-    return this.shopService.update(+id, shop);
+  async updateShop(
+    @CurrentUser() user: User,
+    @Param('id') shopId: number,
+    @Body() updateData: Partial<CreateShopDto>,
+  ) {
+    return this.shopService.updateShop(user.id, shopId, updateData);
   }
 
   @Delete(':id')
@@ -52,13 +48,6 @@ export class ShopController {
   @Get(':shopId')
   getShop(@Param('shopId') shopId: number): Promise<Shop> {
     return this.shopService.getShopByShopId(shopId);
-  }
-
-  @ApiTags('API')
-  @ApiResponse({ status: 201, type: [Shop] })
-  @Get('owner/:ownerId')
-  getOwnerShop(@Param('ownerId') ownerId: number): Promise<Shop[]> {
-    return this.shopService.getOwnerShop(ownerId);
   }
 
   @ApiTags('API')
@@ -87,5 +76,17 @@ export class ShopController {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getShopRevenue(@Param('shopId') shopId: string, @CurrentUser() user: User) {
     return this.shopService.getRevenue(Number(shopId));
+  }
+  @ApiTags('API')
+  @Get('my')
+  async getMyShops(@CurrentUser() user: User) {
+    return this.shopService.getOwnerShop(user.id);
+  }
+
+  @ApiTags('API')
+  @ApiResponse({ status: 201, type: [Shop] })
+  @Get('owner/:ownerId')
+  getOwnerShop(@Param('ownerId') ownerId: number): Promise<Shop[]> {
+    return this.shopService.getOwnerShop(ownerId);
   }
 }

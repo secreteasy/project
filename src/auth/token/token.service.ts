@@ -19,8 +19,6 @@ export class TokenService {
     console.log('JWT Secret:', secret);
     console.log('JWT Expires In:', expiresIn);
 
-    const payloadObject =
-      typeof payload === 'string' ? { user: payload } : payload;
-    return this.jwtService.sign(payloadObject, { secret, expiresIn });
+    return this.jwtService.sign(payload, { secret, expiresIn });
   }
 }
