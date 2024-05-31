@@ -6,6 +6,7 @@ import { updateUserDto } from './dto/updateUserDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Shop } from 'src/entities/shop.entity';
+import { Purchase } from 'src/entities/purchase.entity';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,8 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Shop)
     private readonly shopRepository: Repository<Shop>,
+    @InjectRepository(Purchase)
+    private readonly purchaseRerository: Repository<Purchase>,
   ) {}
 
   async hashPassword(password) {
@@ -21,9 +24,13 @@ export class UserService {
   }
 
   async findUserBy(field: keyof User, value: any): Promise<User> {
-    return this.userRepository.findOne({
+    const user = this.userRepository.findOne({
       where: { [field]: value },
     });
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+    return user;
   }
 
   async createUser(dto: createUserDTO): Promise<User> {
@@ -34,14 +41,21 @@ export class UserService {
       email: dto.email,
       password: dto.password,
     };
+    if (!newUser) {
+      throw new NotFoundException(`Wrong data/user already exsist`);
+    }
     return this.userRepository.save(newUser);
   }
 
   async publicUser(email: string): Promise<User> {
-    return this.userRepository.findOne({
+    const user = this.userRepository.findOne({
       where: { email },
       select: ['id', 'firstName', 'userName', 'email'],
     });
+    if (!user) {
+      throw new NotFoundException(`User not exist`);
+    }
+    return user;
   }
 
   async updateUser(id: number, dto: updateUserDto): Promise<updateUserDto> {
@@ -62,17 +76,22 @@ export class UserService {
   }
 
   async findPurchasesByUserId(userId: number) {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['purchases'],
+    const purchase = await this.purchaseRerository.find({
+      where: { user: { id: userId } },
     });
-    return user.shops.some((shop) => shop.id === userId);
+    if (!purchase) {
+      throw new NotFoundException(`User with this purchase not found`);
+    }
+    return purchase;
   }
 
   async isOwnerOfShop(userId: number, shopId: number): Promise<boolean> {
     const shop = await this.shopRepository.findOne({
       where: { id: shopId, ownerId: userId },
     });
+    if (!shop) {
+      throw new NotFoundException(`Owner or shop not found`);
+    }
     return !!shop;
   }
 }

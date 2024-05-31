@@ -18,6 +18,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Product } from 'src/entities/product.entity';
 import { Purchase } from 'src/entities/purchase.entity';
 import { CreateShopDto } from './dto/CreateShopDto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 
 @Controller('shops')
 export class ShopController {
@@ -39,13 +40,13 @@ export class ShopController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.shopService.remove(+id);
+  remove(@Param('id') id: number): Promise<void> {
+    return this.shopService.remove(id);
   }
 
   @ApiTags('API')
   @ApiResponse({ status: 201, type: Shop })
-  @Get(':shopId')
+  @Get('get/:shopId')
   getShop(@Param('shopId') shopId: number): Promise<Shop> {
     return this.shopService.getShopByShopId(shopId);
   }
@@ -78,8 +79,9 @@ export class ShopController {
     return this.shopService.getRevenue(Number(shopId));
   }
   @ApiTags('API')
+  @UseGuards(JwtAuthGuard)
   @Get('my')
-  async getMyShops(@CurrentUser() user: User) {
+  async getMyShops(@CurrentUser() user: User): Promise<Shop[]> {
     return this.shopService.getOwnerShop(user.id);
   }
 

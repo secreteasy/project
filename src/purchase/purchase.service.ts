@@ -17,8 +17,8 @@ export class PurchaseService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findAll(): Promise<Purchase[]> {
-    return this.purchaseRepository.find();
+  async findAll(limit: number): Promise<Purchase[]> {
+    return this.purchaseRepository.find({ take: limit });
   }
 
   async findOne(id: number): Promise<Purchase> {
@@ -84,7 +84,10 @@ export class PurchaseService {
   }
 
   async update(id: number, purchase: Purchase): Promise<Purchase> {
-    await this.purchaseRepository.update(id, purchase);
+    const buy = await this.purchaseRepository.update(id, purchase);
+    if (!buy) {
+      throw new NotFoundException(`Purchase not found`);
+    }
     return this.findOne(id);
   }
 
@@ -93,9 +96,15 @@ export class PurchaseService {
   }
 
   async getPurchaseByUserId(userId: number): Promise<Purchase[]> {
-    return this.purchaseRepository.find({
+    const byUserID = this.purchaseRepository.find({
       where: { user: { id: userId } },
       relations: ['product', 'user'],
     });
+    if (!byUserID) {
+      throw new NotFoundException(
+        `Purchase with this user Id ${userId} not found`,
+      );
+    }
+    return;
   }
 }

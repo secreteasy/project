@@ -8,7 +8,6 @@ import { CreateShopDto } from './dto/CreateShopDto';
 
 @Injectable()
 export class ShopService {
-  logger: any;
   constructor(
     @InjectRepository(Shop)
     private shopRepository: Repository<Shop>,
@@ -17,10 +16,14 @@ export class ShopService {
   ) {}
 
   async getShopByShopId(shopId: number): Promise<Shop> {
-    return this.shopRepository.findOne({
+    const shop = this.shopRepository.findOne({
       where: { id: shopId },
       relations: ['products'],
     });
+    if (!shop) {
+      throw new NotFoundException(`Shop with this Id ${shopId} not found`);
+    }
+    return shop;
   }
 
   async create(shop: Shop): Promise<Shop> {
@@ -43,25 +46,46 @@ export class ShopService {
   }
 
   async remove(id: number): Promise<void> {
+    const shop = await this.shopRepository.findOne({
+      where: { id },
+    });
+    if (!shop) {
+      throw new NotFoundException(`Shop with Id ${id} not found`);
+    }
     await this.shopRepository.delete(id);
+    return;
   }
 
   async getRevenue(shopId: number) {
-    const shop = await this.shopRepository.findOne({ where: { id: shopId } });
-    return shop.revenue;
+    const shop = await this.shopRepository.findOne({
+      select: { revenue: true },
+      where: { id: shopId },
+    });
+    if (!shop) {
+      throw new NotFoundException(`Revenue not found`);
+    }
+    return shop;
   }
 
   async getOwnerShop(ownerId: number): Promise<Shop[]> {
-    return this.shopRepository.find({
-      where: { ownerId },
+    const ownerShop = await this.shopRepository.find({
+      where: { owner: { id: ownerId } },
       relations: ['products'],
     });
+    if (!ownerShop) {
+      throw new NotFoundException(`Owner with this Id ${ownerId} not found`);
+    }
+    return ownerShop;
   }
 
   async getAllShops(): Promise<Shop[]> {
-    return this.shopRepository.find({
+    const shops = await this.shopRepository.find({
       relations: ['products'],
     });
+    if (!shops) {
+      throw new NotFoundException(`Shops not found`);
+    }
+    return shops;
   }
 
   async getProductsByShopId(shopId: number): Promise<Product[]> {

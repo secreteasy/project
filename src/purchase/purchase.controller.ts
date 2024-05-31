@@ -8,6 +8,7 @@ import {
   Delete,
   NotFoundException,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { PurchaseService } from './purchase.service';
 import { Purchase } from 'src/entities/purchase.entity';
@@ -18,9 +19,9 @@ import { CreatePurchaseDto } from './dto/CreatePurchaseDto';
 export class PurchaseController {
   constructor(private readonly purchaseService: PurchaseService) {}
 
-  @Get()
-  findAll(): Promise<Purchase[]> {
-    return this.purchaseService.findAll();
+  @Get('findAll')
+  findAll(@Query('limit') limit: number): Promise<Purchase[]> {
+    return this.purchaseService.findAll(limit);
   }
 
   @ApiTags('API')

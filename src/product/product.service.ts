@@ -14,12 +14,16 @@ export class ProductService {
     private shopRepository: Repository<Shop>,
   ) {}
 
-  async findAll(): Promise<Product[]> {
-    return this.productRepository.find();
+  async findAll(limit: number): Promise<Product[]> {
+    return this.productRepository.find({ take: limit });
   }
 
   async findOne(id: number): Promise<Product> {
-    return this.productRepository.findOneBy({ id });
+    const product = await this.productRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Product with this Id ${id} not found`);
+    }
+    return product;
   }
 
   async createProduct(createProductDTO: CreateProductDto): Promise<Product> {
@@ -39,11 +43,17 @@ export class ProductService {
   }
 
   async update(id: number, product: Product): Promise<Product> {
-    await this.productRepository.update(id, product);
+    const up = await this.productRepository.update(id, product);
+    if (!up) {
+      throw new NotFoundException(`Can not update this product`);
+    }
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
-    await this.productRepository.delete(id);
+    const del = await this.productRepository.delete(id);
+    if (!del) {
+      throw new NotFoundException(`Can not find this product`);
+    }
   }
 }
