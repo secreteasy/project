@@ -20,6 +20,7 @@ import { Purchase } from 'src/entities/purchase.entity';
 import { CreateShopDto } from './dto/CreateShopDto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 
+@ApiTags('API')
 @Controller('shops')
 export class ShopController {
   logger: any;
@@ -44,28 +45,24 @@ export class ShopController {
     return this.shopService.remove(id);
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: Shop })
   @Get('get/:shopId')
   getShop(@Param('shopId') shopId: number): Promise<Shop> {
     return this.shopService.getShopByShopId(shopId);
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: Shop })
   @Get()
   getAllShops(): Promise<Shop[]> {
     return this.shopService.getAllShops();
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: [Product] })
   @Get(':shopId/products')
   getProductsByShopId(@Param('shopId') shopId: number): Promise<Product[]> {
     return this.shopService.getProductsByShopId(shopId);
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: [Purchase] })
   @Get(':shopId/purchases')
   getPurchasesbyShopId(@Param('shopId') shopId: number): Promise<Purchase[]> {
@@ -78,14 +75,13 @@ export class ShopController {
   getShopRevenue(@Param('shopId') shopId: string, @CurrentUser() user: User) {
     return this.shopService.getRevenue(Number(shopId));
   }
-  @ApiTags('API')
+
   @UseGuards(JwtAuthGuard)
   @Get('my')
   async getMyShops(@CurrentUser() user: User): Promise<Shop[]> {
     return this.shopService.getOwnerShop(user.id);
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: [Shop] })
   @Get('owner/:ownerId')
   getOwnerShop(@Param('ownerId') ownerId: number): Promise<Shop[]> {

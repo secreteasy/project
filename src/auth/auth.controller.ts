@@ -6,18 +6,17 @@ import { AuthUserResponse } from 'src/auth/dto/AuthUserResponse';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 
+@ApiTags('API')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: createUserDTO })
   @Post('register')
   register(@Body() dto: createUserDTO): Promise<createUserDTO> {
     return this.authService.registerUser(dto);
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 200, type: AuthUserResponse })
   @Post('login')
   async login(@Body() dto: UserLoginDTO): Promise<AuthUserResponse> {

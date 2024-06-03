@@ -13,6 +13,7 @@ import { Product } from 'src/entities/product.entity';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/CreateProductDto';
 
+@ApiTags('API')
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -26,7 +27,7 @@ export class ProductController {
   findOne(@Param('id') id: string): Promise<Product> {
     return this.productService.findOne(+id);
   }
-  @ApiTags('API')
+
   @ApiResponse({ status: 201, type: Product })
   @Post('createProduct')
   createProduct(@Body() createProductDto: CreateProductDto): Promise<Product> {

@@ -14,7 +14,7 @@ import { PurchaseService } from './purchase.service';
 import { Purchase } from 'src/entities/purchase.entity';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePurchaseDto } from './dto/CreatePurchaseDto';
-
+@ApiTags('API')
 @Controller('purchases')
 export class PurchaseController {
   constructor(private readonly purchaseService: PurchaseService) {}
@@ -24,7 +24,6 @@ export class PurchaseController {
     return this.purchaseService.findAll(limit);
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: Purchase })
   @Post('createPurchase')
   createPurchase(
@@ -33,7 +32,6 @@ export class PurchaseController {
     return this.purchaseService.createPurchase(createPurchaseDto);
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: Purchase })
   @Post(':purchaseId/confirm')
   async confirmPurchase(@Param('purchaseId') purchaseId: number) {
@@ -49,7 +47,6 @@ export class PurchaseController {
     }
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: Purchase })
   @Delete(':purchaseId/reject')
   async rejectPurchase(@Param('purchaseId') purchaseId: number) {
@@ -61,7 +58,6 @@ export class PurchaseController {
     }
   }
 
-  @ApiTags('API')
   @ApiResponse({ status: 201, type: [Purchase] })
   @Get(':userId')
   getPurchase(@Param('userId') userId: number): Promise<Purchase[]> {

@@ -13,11 +13,11 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
 
+@ApiTags('API')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @ApiTags('API')
   @ApiResponse({ status: 200, type: updateUserDto })
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
