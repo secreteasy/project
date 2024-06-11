@@ -16,6 +16,9 @@ export class Shop {
   @Column()
   name: string;
 
+  @Column()
+  description: string;
+
   @Column({ type: 'decimal', default: 0 })
   revenue: number;
 
