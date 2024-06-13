@@ -19,6 +19,9 @@ export class Product {
   @Column()
   price: number;
 
+  @Column()
+  description: string;
+
   @ManyToOne(() => Shop, (shop) => shop.products, { nullable: true })
   shop: Shop;
 

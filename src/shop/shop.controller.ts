@@ -52,7 +52,7 @@ export class ShopController {
   }
 
   @ApiResponse({ status: 201, type: Shop })
-  @Get()
+  @Get('getAllShops')
   getAllShops(): Promise<Shop[]> {
     return this.shopService.getAllShops();
   }
