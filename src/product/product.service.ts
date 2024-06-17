@@ -35,6 +35,7 @@ export class ProductService {
         `Shop with ID ${createProductDTO.shopName} not found`,
       );
     }
+
     const product = this.productRepository.create({
       ...createProductDTO,
       shop,
@@ -55,5 +56,18 @@ export class ProductService {
     if (!del) {
       throw new NotFoundException(`Can not find this product`);
     }
+  }
+
+  async getCategories(): Promise<string[]> {
+    console.log('Fetching products...');
+    const products = await this.productRepository.find();
+    console.log('Products fetched:', products);
+    const categories = products.map((product) => product.category);
+    console.log('Categories:', categories);
+    return Array.from(new Set(categories)).filter((category) => category);
+  }
+
+  async getProductsByCategory(category: string): Promise<Product[]> {
+    return this.productRepository.find({ where: { category } });
   }
 }

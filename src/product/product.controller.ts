@@ -18,6 +18,21 @@ import { CreateProductDto } from './dto/CreateProductDto';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Get('categories')
+  async getCategories(): Promise<string[]> {
+    console.log('Fetching categories...');
+    const categories = await this.productService.getCategories();
+    console.log('Categories fetched:', categories);
+    return categories;
+  }
+
+  @Get('category/:category')
+  async getProductsByCategory(
+    @Param('category') category: string,
+  ): Promise<Product[]> {
+    return this.productService.getProductsByCategory(category);
+  }
+
   @Get('findAll')
   findAll(@Query('limit') limit: number): Promise<Product[]> {
     return this.productService.findAll(limit);
