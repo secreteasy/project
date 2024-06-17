@@ -5,6 +5,7 @@ import { Shop } from 'src/entities/shop.entity';
 import { Product } from 'src/entities/product.entity';
 import { Purchase } from 'src/entities/purchase.entity';
 import { CreateShopDto } from './dto/CreateShopDto';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class ShopService {
@@ -13,6 +14,8 @@ export class ShopService {
     private shopRepository: Repository<Shop>,
     @InjectRepository(Purchase)
     private purchaseRepository: Repository<Purchase>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async getShopByShopId(shopId: number): Promise<Shop> {
@@ -26,7 +29,17 @@ export class ShopService {
     return shop;
   }
 
-  async create(shop: Shop): Promise<Shop> {
+  async create(createShopDto: CreateShopDto): Promise<Shop> {
+    const owner = await this.userRepository.findOne({
+      where: { userName: createShopDto.ownerName },
+    });
+    if (!owner) {
+      throw new NotFoundException(`user not found`);
+    }
+    const shop = this.shopRepository.create({
+      ...createShopDto,
+      owner,
+    });
     return this.shopRepository.save(shop);
   }
 
@@ -36,7 +49,7 @@ export class ShopService {
     updateData: Partial<CreateShopDto>,
   ): Promise<Shop> {
     const shop = await this.shopRepository.findOne({
-      where: { id: shopId, ownerId: userId },
+      where: { id: shopId, owner: { id: userId } },
     });
     if (!shop) {
       throw new Error('You do not have permission to edit this shop');

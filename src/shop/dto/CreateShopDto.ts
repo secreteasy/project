@@ -6,4 +6,7 @@ export class CreateShopDto {
 
   @IsString()
   description: string;
+
+  @IsString()
+  ownerName: string;
 }

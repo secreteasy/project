@@ -27,8 +27,8 @@ export class ShopController {
   constructor(private readonly shopService: ShopService) {}
 
   @Post('create')
-  create(@Body() shop: Shop): Promise<Shop> {
-    return this.shopService.create(shop);
+  create(@Body() createShopDto: CreateShopDto): Promise<Shop> {
+    return this.shopService.create(createShopDto);
   }
 
   @Put(':id')

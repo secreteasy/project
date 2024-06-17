@@ -27,12 +27,12 @@ export class ProductService {
   }
 
   async createProduct(createProductDTO: CreateProductDto): Promise<Product> {
-    const shop = await this.shopRepository.findOneBy({
-      id: createProductDTO.shopId,
+    const shop = await this.shopRepository.findOne({
+      where: { name: createProductDTO.shopName },
     });
     if (!shop) {
       throw new NotFoundException(
-        `Shop with ID ${createProductDTO.shopId} not found`,
+        `Shop with ID ${createProductDTO.shopName} not found`,
       );
     }
     const product = this.productRepository.create({
