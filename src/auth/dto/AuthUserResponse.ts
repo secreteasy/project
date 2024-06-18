@@ -15,4 +15,7 @@ export class AuthUserResponse {
 
   @IsString()
   token: string;
+
+  @IsString()
+  role: string;
 }

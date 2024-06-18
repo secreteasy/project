@@ -39,8 +39,8 @@ export class ProductController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Product> {
-    return this.productService.findOne(+id);
+  findOne(@Param('id') id: number): Promise<Product> {
+    return this.productService.findOne(id);
   }
 
   @ApiResponse({ status: 201, type: Product })
@@ -50,12 +50,12 @@ export class ProductController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() product: Product): Promise<Product> {
-    return this.productService.update(+id, product);
+  update(@Param('id') id: number, @Body() product: Product): Promise<Product> {
+    return this.productService.update(id, product);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.productService.remove(+id);
+  remove(@Param('id') id: number): Promise<void> {
+    return this.productService.remove(id);
   }
 }

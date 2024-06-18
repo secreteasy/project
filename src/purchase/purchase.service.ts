@@ -49,7 +49,7 @@ export class PurchaseService {
     const purchase = this.purchaseRepository.create({
       product,
       user,
-      date: new Date(createPurchaseDto.date),
+      date: new Date(),
       price: createPurchaseDto.price,
       confirmed: false,
     });

@@ -1,24 +1,32 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class OwnershipGuard implements CanActivate {
-  constructor(private userService: UserService) {}
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  constructor(
+    private reflector: Reflector,
+    private userService: UserService,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const { userId, shopId } = request.params;
+    const userId = parseInt(request.params.userId, 10);
 
-    if (userId && user.id !== Number(userId)) {
-      return false;
+    if (user.role === 'admin') {
+      return true;
     }
 
-    if (shopId) {
-      return this.userService.isOwnerOfShop(user.id, Number(shopId));
+    if (user.id !== userId) {
+      throw new ForbiddenException('You do not have access to this resource');
     }
+
     return true;
   }
 }

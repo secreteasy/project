@@ -19,7 +19,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiResponse({ status: 200, type: updateUserDto })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OwnershipGuard)
   @Patch(':id')
   updateUser(
     @Param('id') id: number,
@@ -28,7 +28,7 @@ export class UserController {
     return this.userService.updateUser(Number(id), dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OwnershipGuard)
   @Delete(':id')
   deleteUser(@Param('id') id: number): Promise<boolean> {
     return this.userService.deleteUser(Number(id));
