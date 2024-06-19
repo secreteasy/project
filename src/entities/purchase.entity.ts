@@ -16,7 +16,7 @@ export class Purchase {
   @Column()
   date: Date;
 
-  @ManyToOne(() => User, (user) => user.purchases, { eager: true })
+  @ManyToOne(() => User, (user) => user.purchases) //, { eager: true }
   user: User;
 
   @Column({ default: false })

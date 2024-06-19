@@ -33,6 +33,16 @@ export class UserService {
     return user;
   }
 
+  async findUserById(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
+  }
+
   async createUser(dto: createUserDTO): Promise<User> {
     dto.password = await this.hashPassword(dto.password);
     const newUser = {
@@ -75,14 +85,25 @@ export class UserService {
     return true;
   }
 
+  // async findPurchasesByUserId(userId: number) {
+  //   const purchase = await this.purchaseRerository.find({
+  //     where: { user: { id: userId } },
+  //   });
+  //   if (!purchase) {
+  //     throw new NotFoundException(`User with this purchase not found`);
+  //   }
+  //   return purchase;
+  // }
+
   async findPurchasesByUserId(userId: number) {
-    const purchase = await this.purchaseRerository.find({
+    const purchases = await this.purchaseRerository.find({
       where: { user: { id: userId } },
     });
-    if (!purchase) {
-      throw new NotFoundException(`User with this purchase not found`);
+
+    if (!purchases || purchases.length === 0) {
+      throw new NotFoundException(`User with ID ${userId} has no purchases`);
     }
-    return purchase;
+    return purchases;
   }
 
   async isOwnerOfShop(userId: number, shopId: number): Promise<boolean> {

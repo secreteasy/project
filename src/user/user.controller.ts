@@ -12,6 +12,7 @@ import { updateUserDto } from './dto/updateUserDto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
+import { User } from 'src/entities/user.entity';
 
 @ApiTags('API')
 @Controller('user')
@@ -34,9 +35,16 @@ export class UserController {
     return this.userService.deleteUser(Number(id));
   }
 
-  @UseGuards(JwtAuthGuard, OwnershipGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':userId/purchases')
   findPurchasesByUser(@Param('userId') userId: string) {
     return this.userService.findPurchasesByUserId(Number(userId));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ status: 200, type: User })
+  @Get(':id')
+  getUserProfile(@Param('id') id: number): Promise<User> {
+    return this.userService.findUserById(id);
   }
 }

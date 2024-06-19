@@ -51,7 +51,6 @@ export class PurchaseService {
       user,
       date: new Date(),
       price: createPurchaseDto.price,
-      confirmed: false,
     });
     return this.purchaseRepository.save(purchase);
   }
