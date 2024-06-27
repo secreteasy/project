@@ -18,7 +18,9 @@ export class PurchaseService {
   ) {}
 
   async findAll(limit: number): Promise<Purchase[]> {
-    return this.purchaseRepository.find({ take: limit });
+    return this.purchaseRepository.find({
+      take: limit,
+    });
   }
 
   async findOne(id: number): Promise<Purchase> {

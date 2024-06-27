@@ -85,21 +85,14 @@ export class UserService {
     return true;
   }
 
-  // async findPurchasesByUserId(userId: number) {
-  //   const purchase = await this.purchaseRerository.find({
-  //     where: { user: { id: userId } },
-  //   });
-  //   if (!purchase) {
-  //     throw new NotFoundException(`User with this purchase not found`);
-  //   }
-  //   return purchase;
-  // }
-
-  async findPurchasesByUserId(userId: number) {
+  async findPurchasesByUserId(userId: number): Promise<Purchase[]> {
+    console.log('Fetching purchases for user ID:', userId);
     const purchases = await this.purchaseRerository.find({
       where: { user: { id: userId } },
+      relations: ['user', 'product'],
     });
 
+    console.log('Fetched purchases:', purchases);
     if (!purchases || purchases.length === 0) {
       throw new NotFoundException(`User with ID ${userId} has no purchases`);
     }

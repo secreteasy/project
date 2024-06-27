@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { ShopService } from './shop.service';
 import { Shop } from 'src/entities/shop.entity';
-import { AuthGuard } from '@nestjs/passport';
 import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
 import { User } from 'src/entities/user.entity';
@@ -69,7 +68,7 @@ export class ShopController {
     return this.shopService.getPurchasesByShopId(shopId);
   }
 
-  @UseGuards(AuthGuard('jwt'), OwnershipGuard)
+  @UseGuards(OwnershipGuard)
   @Get(':shopId/revenue')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getShopRevenue(@Param('shopId') shopId: string, @CurrentUser() user: User) {

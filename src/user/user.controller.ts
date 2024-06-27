@@ -13,6 +13,8 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
 import { User } from 'src/entities/user.entity';
+import { CurrentUser } from 'src/decorator/current-user.decorator';
+import { JwtPayload } from 'src/auth/strategy/auth.interface';
 
 @ApiTags('API')
 @Controller('user')
@@ -36,9 +38,10 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':userId/purchases')
-  findPurchasesByUser(@Param('userId') userId: string) {
-    return this.userService.findPurchasesByUserId(Number(userId));
+  @Get('purchases')
+  async findPurchasesByUser(@CurrentUser() user: JwtPayload) {
+    console.log('Current user:', user);
+    return this.userService.findPurchasesByUserId(user.id);
   }
 
   @UseGuards(JwtAuthGuard)

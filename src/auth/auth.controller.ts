@@ -1,10 +1,9 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { createUserDTO } from 'src/user/dto/createUserDTO';
 import { UserLoginDTO } from 'src/auth/dto/UserLoginDTO';
 import { AuthUserResponse } from 'src/auth/dto/AuthUserResponse';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 
 @ApiTags('API')
 @Controller('auth')
@@ -23,7 +22,6 @@ export class AuthController {
     return this.authService.loginUser(dto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('test')
   test() {
     return { message: 'Authorized' };
